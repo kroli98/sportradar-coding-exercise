@@ -14,24 +14,13 @@ interface WeatherForecast {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public forecasts: WeatherForecast[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor() { }
 
-  ngOnInit() {
-    this.getForecasts();
-  }
+    ngOnInit(): void {
+        throw new Error('Method not implemented.');
+    }
 
-  getForecasts() {
-    this.http.get<WeatherForecast[]>('/weatherforecast').subscribe(
-      (result) => {
-        this.forecasts = result;
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  }
 
   title = 'sportradarcodingexercise.client';
 }
