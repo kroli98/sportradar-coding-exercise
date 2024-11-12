@@ -1,3 +1,5 @@
+using SportradarCodingExercise.Server.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +8,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<DatabaseInitializer>();
 
 var app = builder.Build();
 
@@ -26,5 +29,19 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+// Initialize and seed the database only in development environment
+if (app.Environment.IsDevelopment())
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<DatabaseInitializer>();
+        await dbInitializer.InitializeAsync();
+
+        //Only necessary if we want initial data, we should remove it otherwise
+        //Remove after we have seeded, avoiding reseeding
+        await dbInitializer.SeedAsync();
+    }
+}
 
 app.Run();
