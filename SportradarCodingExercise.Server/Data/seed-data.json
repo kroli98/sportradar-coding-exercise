@@ -1,0 +1,354 @@
+﻿{
+  "Country": [
+    {
+      "CountryId": 1,
+      "Name": "Saudi Arabia",
+      "CountryCode": "SAU"
+    },
+    {
+      "CountryId": 2,
+      "Name": "Uzbekistan",
+      "CountryCode": "UZB"
+    },
+    {
+      "CountryId": 3,
+      "Name": "United Arab Emirates",
+      "CountryCode": "ARE"
+    },
+    {
+      "CountryId": 4,
+      "Name": "United States",
+      "CountryCode": "USA"
+    },
+    {
+      "CountryId": 5,
+      "Name": "Switzerland",
+      "CountryCode": "CHE"
+    },
+    {
+      "CountryId": 6,
+      "Name": "Sweden",
+      "CountryCode": "SWE"
+    }
+  ],
+  "Season": [
+    {
+      "SeasonId": 1,
+      "StartDate": "2024-01-01",
+      "EndDate": "2024-12-31",
+      "Name": "2024 Season"
+    },
+    {
+      "SeasonId": 2,
+      "StartDate": "2024-01-01",
+      "EndDate": "2024-12-31",
+      "Name": "2024 NBA Season"
+    },
+    {
+      "SeasonId": 3,
+      "StartDate": "2024-01-01",
+      "EndDate": "2024-12-31",
+      "Name": "2024 CHL Season"
+    }
+  ],
+  "Competition": [
+    {
+      "CompetitionId": 1,
+      "Name": "AFC Champions League",
+      "CompetitionSlug": "afc-champions-league",
+      "SeasonId": 1
+    },
+    {
+      "CompetitionId": 2,
+      "Name": "NBA",
+      "CompetitionSlug": "nba",
+      "SeasonId": 2
+    },
+    {
+      "CompetitionId": 3,
+      "Name": "Champions Hockey League",
+      "CompetitionSlug": "champions-hockey-league",
+      "SeasonId": 3
+    }
+  ],
+  "Stage": [
+    {
+      "StageId": 1,
+      "Name": "Regular Season",
+      "Ordering": 1
+    },
+    {
+      "StageId": 2,
+      "Name": "Playoffs",
+      "Ordering": 2
+    }
+  ],
+  "Status": [
+    {
+      "StatusId": 1,
+      "Name": "Scheduled"
+    },
+    {
+      "StatusId": 2,
+      "Name": "In Progress"
+    },
+    {
+      "StatusId": 3,
+      "Name": "Completed"
+    },
+    {
+      "StatusId": 4,
+      "Name": "Cancelled"
+    }
+  ],
+  "Sport": [
+    {
+      "SportId": 1,
+      "Name": "Football"
+    },
+    {
+      "SportId": 2,
+      "Name": "Basketball"
+    },
+    {
+      "SportId": 3,
+      "Name": "Ice Hockey"
+    },
+    {
+      "SportId": 4,
+      "Name": "Volleyball"
+    }
+  ],
+  "Team": [
+    {
+      "TeamId": 1,
+      "Name": "Al Shabab FC",
+      "OfficialName": "Al Shabab Football Club",
+      "Slug": "al-shabab-fc",
+      "Abbreviation": "SHB",
+      "CountryId": 1,
+      "SportId": 1
+    },
+    {
+      "TeamId": 2,
+      "Name": "FC Nasaf",
+      "OfficialName": "Football Club Nasaf",
+      "Slug": "fc-nasaf",
+      "Abbreviation": "NAS",
+      "CountryId": 2,
+      "SportId": 1
+    },
+    {
+      "TeamId": 3,
+      "Name": "Al Hilal",
+      "OfficialName": "Al Hilal Saudi Football Club",
+      "Slug": "al-hilal",
+      "Abbreviation": "HIL",
+      "CountryId": 1,
+      "SportId": 1
+    },
+    {
+      "TeamId": 4,
+      "Name": "Shabab Al Ahli",
+      "OfficialName": "Shabab Al Ahli Dubai Football Club",
+      "Slug": "shabab-al-ahli",
+      "Abbreviation": "SHA",
+      "CountryId": 3,
+      "SportId": 1
+    },
+    {
+      "TeamId": 5,
+      "Name": "LA Lakers",
+      "OfficialName": "Los Angeles Lakers",
+      "Slug": "la-lakers",
+      "Abbreviation": "LAL",
+      "CountryId": 4,
+      "SportId": 2
+    },
+    {
+      "TeamId": 6,
+      "Name": "Celtics",
+      "OfficialName": "Boston Celtics",
+      "Slug": "boston-celtics",
+      "Abbreviation": "BOS",
+      "CountryId": 4,
+      "SportId": 2
+    },
+    {
+      "TeamId": 7,
+      "Name": "HC Davos",
+      "OfficialName": "Hockey Club Davos",
+      "Slug": "hc-davos",
+      "Abbreviation": "HCD",
+      "CountryId": 5,
+      "SportId": 3
+    },
+    {
+      "TeamId": 8,
+      "Name": "Frölunda",
+      "OfficialName": "Frölunda Hockey Club",
+      "Slug": "frolunda-hc",
+      "Abbreviation": "FHC",
+      "CountryId": 6,
+      "SportId": 3
+    }
+  ],
+  "Address": [
+    {
+      "AddressId": 1,
+      "StreetNumber": "1",
+      "StreetName": "Champions Way",
+      "City": "Riyadh",
+      "CountryId": 1
+    },
+    {
+      "AddressId": 2,
+      "StreetNumber": "1111",
+      "StreetName": "S Figueroa St",
+      "City": "Los Angeles",
+      "CountryId": 4
+    },
+    {
+      "AddressId": 3,
+      "StreetNumber": "100",
+      "StreetName": "Legends Way",
+      "City": "Boston",
+      "CountryId": 4
+    },
+    {
+      "AddressId": 4,
+      "StreetNumber": "1",
+      "StreetName": "Talstrasse",
+      "City": "Davos",
+      "CountryId": 5
+    }
+  ],
+  "Venue": [
+    {
+      "VenueId": 1,
+      "Name": "King Fahd International Stadium",
+      "AddressId": 1,
+      "Capacity": 68752
+    },
+    {
+      "VenueId": 2,
+      "Name": "Crypto.com Arena",
+      "AddressId": 2,
+      "Capacity": 19068
+    },
+    {
+      "VenueId": 3,
+      "Name": "TD Garden",
+      "AddressId": 3,
+      "Capacity": 19156
+    },
+    {
+      "VenueId": 4,
+      "Name": "Vaillant Arena",
+      "AddressId": 4,
+      "Capacity": 7080
+    }
+  ],
+  "EventType": [
+    {
+      "EventTypeId": 1,
+      "Name": "Goal"
+    },
+    {
+      "EventTypeId": 2,
+      "Name": "Yellow Card"
+    },
+    {
+      "EventTypeId": 3,
+      "Name": "Red Card"
+    },
+    {
+      "EventTypeId": 4,
+      "Name": "Substitution"
+    },
+    {
+      "EventTypeId": 5,
+      "Name": "Point"
+    },
+    {
+      "EventTypeId": 6,
+      "Name": "Foul"
+    }
+  ],
+  "Event": [
+    {
+      "EventId": 1,
+      "Date": "2024-01-03",
+      "TimeUTC": "18:00:00",
+      "DurationInMinutes": 90,
+      "Description": "AFC Champions League Group Stage Match",
+      "HomeScore": 0,
+      "AwayScore": 1,
+      "StatusId": 3,
+      "SportId": 1,
+      "HomeTeamId": 1,
+      "AwayTeamId": 2,
+      "VenueId": 1,
+      "StageId": 1,
+      "CompetitionId": 1
+    },
+    {
+      "EventId": 2,
+      "Date": "2024-01-05",
+      "TimeUTC": "02:00:00",
+      "DurationInMinutes": 48,
+      "Description": "NBA Regular Season Game",
+      "HomeScore": 0,
+      "AwayScore": 0,
+      "StatusId": 1,
+      "SportId": 2,
+      "HomeTeamId": 5,
+      "AwayTeamId": 6,
+      "VenueId": 2,
+      "StageId": 1,
+      "CompetitionId": 2
+    },
+    {
+      "EventId": 3,
+      "Date": "2024-01-06",
+      "TimeUTC": "19:45:00",
+      "DurationInMinutes": 60,
+      "Description": "Champions Hockey League Playoff Match",
+      "HomeScore": 1,
+      "AwayScore": 0,
+      "StatusId": 2,
+      "SportId": 3,
+      "HomeTeamId": 7,
+      "AwayTeamId": 8,
+      "VenueId": 4,
+      "StageId": 2,
+      "CompetitionId": 3
+    }
+  ],
+  "EventDetail": [
+    {
+      "EventDetailId": 1,
+      "EventId": 1,
+      "TeamId": 2,
+      "EventTypeId": 1,
+      "RecordedAtUTC": "2024-01-03T18:23:00",
+      "Description": "Goal scored by FC Nasaf"
+    },
+    {
+      "EventDetailId": 2,
+      "EventId": 1,
+      "TeamId": 1,
+      "EventTypeId": 2,
+      "RecordedAtUTC": "2024-01-03T18:35:00",
+      "Description": "Yellow card for Al Shabab player"
+    },
+    {
+      "EventDetailId": 3,
+      "EventId": 3,
+      "TeamId": 7,
+      "EventTypeId": 1,
+      "RecordedAtUTC": "2024-01-06T20:15:00",
+      "Description": "Goal scored by HC Davos"
+    }
+  ]
+}
