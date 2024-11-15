@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SportradarCodingExercise.Server.Interfaces;
 using SportradarCodingExercise.Server.Models;
+using System.Globalization;
 
 namespace SportradarCodingExercise.Server.Controllers
 {
@@ -49,6 +50,31 @@ namespace SportradarCodingExercise.Server.Controllers
                 }
 
                 return Ok(evnt);
+            }
+            catch(Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("/date/{date}")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetEventsByDate(string date)
+        {
+            try
+            {
+                if (!DateOnly.TryParse(date, CultureInfo.InvariantCulture, out DateOnly parsedDate))
+                {
+                    return BadRequest("Invalid date format. Use YYYY-MM-DD");
+                }
+
+                var events = await _eventService.GetEventsByDateAsync(parsedDate);
+
+                if (!events.Any())
+                {
+                    return NoContent();
+                }
+
+                return Ok(events);
             }
             catch (Exception)
             {
