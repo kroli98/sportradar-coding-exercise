@@ -36,7 +36,7 @@ namespace SportradarCodingExercise.Server.Interfaces
         /// </summary>
         /// <param name="id">The event ID to look up.</param>
         /// <returns>The requested event or null if not found.</returns>
-        Task<Event> GetEventByIdAsync(int id);
+        Task<Event?> GetEventByIdAsync(int id);
 
         /// <summary>
         /// Adds a new event to the database.
