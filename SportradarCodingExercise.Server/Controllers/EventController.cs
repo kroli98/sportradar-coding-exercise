@@ -37,7 +37,7 @@ namespace SportradarCodingExercise.Server.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("/id/{id}")]
         public async Task<ActionResult<Event>> GetEvent(int id)
         {
             try
