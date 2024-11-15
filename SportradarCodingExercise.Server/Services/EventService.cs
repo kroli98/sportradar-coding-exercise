@@ -92,9 +92,25 @@ namespace SportradarCodingExercise.Server.Services
         }
 
         /// <inheritdoc/>
-        public Task<IEnumerable<Event>> GetEventsBySportIdAsync(int sportId)
+        public async Task<IEnumerable<Event>> GetEventsBySportIdAsync(int sportId)
         {
-            throw new NotImplementedException();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var sql = GetEventsQuery() + " WHERE e.SportId = @SportId ORDER BY e.Date DESC, e.TimeUTC ASC";
+
+            var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@SportId", sportId);
+
+            var events = new List<Event>();
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                events.Add(MapEventFromReader(reader));
+            }
+
+            return events;
         }
 
         /// <summary>
