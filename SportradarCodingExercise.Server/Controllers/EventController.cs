@@ -19,14 +19,21 @@ namespace SportradarCodingExercise.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
         {
-            var events = await _eventService.GetEventsAsync();
-
-            if(!events.Any())
+            try
             {
-                return NoContent();
-            }
+                var events = await _eventService.GetEventsAsync();
 
-            return Ok(events);
+                if (!events.Any())
+                {
+                    return NoContent();
+                }
+
+                return Ok(events);
+            }
+            catch(Exception)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }
