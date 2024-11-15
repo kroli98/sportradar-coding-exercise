@@ -37,7 +37,7 @@ namespace SportradarCodingExercise.Server.Controllers
             }
         }
 
-        [HttpGet("/id/{id}")]
+        [HttpGet("id/{id}")]
         public async Task<ActionResult<Event>> GetEvent(int id)
         {
             try
@@ -57,7 +57,7 @@ namespace SportradarCodingExercise.Server.Controllers
             }
         }
 
-        [HttpGet("/date/{date}")]
+        [HttpGet("date/{date}")]
         public async Task<ActionResult<IEnumerable<Event>>> GetEventsByDate(string date)
         {
             try
