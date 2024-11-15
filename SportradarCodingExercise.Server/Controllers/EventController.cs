@@ -35,5 +35,25 @@ namespace SportradarCodingExercise.Server.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Event>> GetEvent(int id)
+        {
+            try
+            {
+                var evnt = await _eventService.GetEventByIdAsync(id);
+
+                if (evnt == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(evnt);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }
