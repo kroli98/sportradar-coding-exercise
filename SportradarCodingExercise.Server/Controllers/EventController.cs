@@ -81,5 +81,25 @@ namespace SportradarCodingExercise.Server.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet("sport/{sportId}")]
+        public async Task<ActionResult<IEnumerable<Event>>> GetEventsBySportId(int sportId)
+        {
+            try
+            {
+                var events = await _eventService.GetEventsBySportIdAsync(sportId);
+
+                if (!events.Any())
+                {
+                    return NoContent();
+                }
+
+                return Ok(events);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }
