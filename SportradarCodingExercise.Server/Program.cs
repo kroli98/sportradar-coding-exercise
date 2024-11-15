@@ -1,4 +1,6 @@
 using SportradarCodingExercise.Server.Data;
+using SportradarCodingExercise.Server.Interfaces;
+using SportradarCodingExercise.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<DatabaseInitializer>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
 
