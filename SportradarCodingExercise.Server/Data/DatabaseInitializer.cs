@@ -332,7 +332,7 @@ namespace SportradarCodingExercise.Server.Data
             CREATE TABLE Venue (
                 VenueId INT PRIMARY KEY IDENTITY(1,1),
                 Name VARCHAR(100) NOT NULL,
-                AddressId INT NULL,
+                AddressId INT NOT NULL,
                 Capacity INT NOT NULL,
                 CONSTRAINT _fk_venue_address FOREIGN KEY (AddressId) 
                     REFERENCES Address(AddressId)
