@@ -2,13 +2,13 @@
 {
     public class Event
     {
-        public int EventId { get; set; }
-        public DateOnly Date { get; set; }
-        public TimeOnly TimeUTC { get; set; }
-        public int DurationInMinutes { get; set; }
+        public required int EventId { get; set; }
+        public required DateOnly Date { get; set; }
+        public required TimeOnly TimeUTC { get; set; }
+        public required int DurationInMinutes { get; set; }
         public string? Description { get; set; }
-        public int HomeScore { get; set; }
-        public int AwayScore { get; set; }
+        public required int HomeScore { get; set; }
+        public required int AwayScore { get; set; }
 
         public required Status Status { get; set; }
         public required Team HomeTeam { get; set; }

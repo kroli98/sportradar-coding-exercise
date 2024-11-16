@@ -2,9 +2,9 @@
 {
     public class Season
     {
-        public int SeasonId { get; set; }
-        public DateOnly StartDate { get; set; }
-        public DateOnly EndDate { get; set; }
+        public required int SeasonId { get; set; }
+        public required DateOnly StartDate { get; set; }
+        public required DateOnly EndDate { get; set; }
         public required string Name { get; set; }
     }
 }

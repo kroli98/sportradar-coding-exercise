@@ -2,7 +2,7 @@
 {
     public class Competition
     {
-        public int CompetitionId { get; set; }
+        public required int CompetitionId { get; set; }
         public required string Name { get; set; }
         public required string CompetitionSlug { get; set; }
 

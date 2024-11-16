@@ -2,8 +2,8 @@
 {
     public class Stage
     {
-        public int StageId { get; set; }
+        public required int StageId { get; set; }
         public required string Name { get; set; }
-        public int Ordering { get; set; }
+        public required int Ordering { get; set; }
     }
 }

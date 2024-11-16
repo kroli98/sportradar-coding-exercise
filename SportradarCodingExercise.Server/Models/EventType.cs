@@ -2,7 +2,7 @@
 {
     public class EventType
     {
-        public int EventTypeId { get; set; }
+        public required int EventTypeId { get; set; }
         public required string Name { get; set; }
     }
 }
