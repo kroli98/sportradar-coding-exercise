@@ -1,4 +1,5 @@
-﻿using SportradarCodingExercise.Server.Models;
+﻿using SportradarCodingExercise.Server.DTOs;
+using SportradarCodingExercise.Server.Models;
 
 namespace SportradarCodingExercise.Server.Interfaces
 {
@@ -43,6 +44,6 @@ namespace SportradarCodingExercise.Server.Interfaces
         /// </summary>
         /// <param name="evnt">The event to add.</param>
         /// <returns>The created event with its assigned ID.</returns>
-        Task<Event> AddEventAsync(Event evnt);
+        Task<Event> AddEventAsync(CreateEventDto evnt);
     }
 }
