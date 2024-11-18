@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using SportradarCodingExercise.Server.CustomExceptions;
+using SportradarCodingExercise.Server.DTOs;
 using SportradarCodingExercise.Server.Interfaces;
 using SportradarCodingExercise.Server.Models;
 
@@ -24,9 +26,99 @@ namespace SportradarCodingExercise.Server.Services
         }
 
         /// <inheritdoc/>
-        public Task<Event> AddEventAsync(Event evnt)
+        public async Task<Event> AddEventAsync(CreateEventDto evnt)
         {
-            throw new NotImplementedException();
+            if (evnt == null)
+            {
+                throw new ArgumentNullException(nameof(evnt));
+            }
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            await ValidateForeignKeysAsync(connection, evnt);
+
+            var hasVenueConflict = await CheckVenueConflictAsync(connection, evnt);
+            if (hasVenueConflict)
+            {
+                throw new EventConflictException(
+                    "Venue is already booked for this time period",
+                    EventConflictType.Venue);
+            }
+            var hasTeamConflict = await CheckTeamConflictAsync(connection, evnt);
+            if (hasTeamConflict)
+            {
+                throw new EventConflictException(
+                    "One or both teams are already playing at this time",
+                    EventConflictType.Team);
+            }
+
+
+            using var transaction = connection.BeginTransaction();
+
+            try
+            {
+                var sql = @"
+            INSERT INTO Event (
+                Date,
+                TimeUTC,
+                DurationInMinutes,
+                Description,
+                HomeScore,
+                AwayScore,
+                StatusId,
+                HomeTeamId,
+                AwayTeamId,
+                VenueId,
+                StageId,
+                CompetitionId,
+                SportId
+            )
+            VALUES (
+                @Date,
+                @TimeUTC,
+                @DurationInMinutes,
+                @Description,
+                @HomeScore,
+                @AwayScore,
+                @StatusId,
+                @HomeTeamId,
+                @AwayTeamId,
+                @VenueId,
+                @StageId,
+                @CompetitionId,
+                @SportId
+            );
+            SELECT CAST(SCOPE_IDENTITY() as int);";
+
+                using var command = new SqlCommand(sql, connection, transaction);
+
+                command.Parameters.AddWithValue("@Date", evnt.Date);
+                command.Parameters.AddWithValue("@TimeUTC", evnt.TimeUTC);
+                command.Parameters.AddWithValue("@DurationInMinutes", evnt.DurationInMinutes);
+                command.Parameters.AddWithValue("@Description", evnt.Description ?? (object)DBNull.Value);
+                command.Parameters.AddWithValue("@HomeScore", evnt.HomeScore);
+                command.Parameters.AddWithValue("@AwayScore", evnt.AwayScore);
+                command.Parameters.AddWithValue("@StatusId", evnt.StatusId);
+                command.Parameters.AddWithValue("@HomeTeamId", evnt.HomeTeamId);
+                command.Parameters.AddWithValue("@AwayTeamId", evnt.AwayTeamId);
+                command.Parameters.AddWithValue("@VenueId", evnt.VenueId);
+                command.Parameters.AddWithValue("@StageId", evnt.StageId);
+                command.Parameters.AddWithValue("@CompetitionId", evnt.CompetitionId);
+                command.Parameters.AddWithValue("@SportId", evnt.SportId);
+
+                var eventId = await command.ExecuteScalarAsync();
+
+                await transaction.CommitAsync();
+
+                return await GetEventByIdAsync(Convert.ToInt32(eventId))
+                    ?? throw new Exception("Failed to retrieve created event");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         /// <inheritdoc/>
@@ -309,6 +401,158 @@ namespace SportradarCodingExercise.Server.Services
                     Ordering = reader.GetInt32(reader.GetOrdinal("StageOrdering"))
                 }
             };
-        }      
+        }
+        private static async Task ValidateForeignKeysAsync(SqlConnection connection, CreateEventDto evnt)
+        {
+            bool isAllExists = true;
+            var sql = @"
+                SELECT 
+                    (SELECT COUNT(1) FROM Sport WHERE SportId = @SportId) as SportExists,
+                    (SELECT COUNT(1) FROM Team WHERE TeamId = @HomeTeamId) as HomeTeamExists,
+                    (SELECT COUNT(1) FROM Team WHERE TeamId = @AwayTeamId) as AwayTeamExists,
+                    (SELECT COUNT(1) FROM Venue WHERE VenueId = @VenueId) as VenueExists,
+                    (SELECT COUNT(1) FROM Stage WHERE StageId = @StageId) as StageExists,
+                    (SELECT COUNT(1) FROM Competition WHERE CompetitionId = @CompetitionId) as CompetitionExists,
+                    (SELECT COUNT(1) FROM Status WHERE StatusId = @StatusId) as StatusExists";
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@SportId", evnt.SportId);
+            command.Parameters.AddWithValue("@HomeTeamId", evnt.HomeTeamId);
+            command.Parameters.AddWithValue("@AwayTeamId", evnt.AwayTeamId);
+            command.Parameters.AddWithValue("@VenueId", evnt.VenueId);
+            command.Parameters.AddWithValue("@StageId", evnt.StageId);
+            command.Parameters.AddWithValue("@CompetitionId", evnt.CompetitionId);
+            command.Parameters.AddWithValue("@StatusId", evnt.StatusId);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+
+                if (reader.GetInt32(reader.GetOrdinal("SportExists")) == 0)
+                {
+                    isAllExists = false;
+                }
+
+                if (reader.GetInt32(reader.GetOrdinal("HomeTeamExists")) == 0)
+                {
+                    isAllExists = false;
+
+                }
+
+                if (reader.GetInt32(reader.GetOrdinal("AwayTeamExists")) == 0)
+                {
+                    isAllExists = false;
+                }
+
+                if (reader.GetInt32(reader.GetOrdinal("VenueExists")) == 0)
+                {
+                    isAllExists = false;
+                }
+
+                if (reader.GetInt32(reader.GetOrdinal("StageExists")) == 0)
+                {
+                    isAllExists = false;
+                }
+
+                if (reader.GetInt32(reader.GetOrdinal("CompetitionExists")) == 0)
+                {
+                    isAllExists = false;
+                }
+
+                if (reader.GetInt32(reader.GetOrdinal("StatusExists")) == 0)
+                {
+                    isAllExists = false;
+                }
+
+                if (!isAllExists)
+                {
+                    throw new InvalidOperationException("One or more foreign keys do not exist");
+                }
+            }
+        }
+
+
+        private static async Task<bool> CheckVenueConflictAsync(SqlConnection connection, CreateEventDto newEvent)
+        {
+            var sql = @"
+               SELECT COUNT(1)
+               FROM Event
+               WHERE VenueId = @VenueId
+               AND (
+                   DATEADD(MINUTE, @Duration, 
+                       DATETIMEFROMPARTS(YEAR(@Date), MONTH(@Date), DAY(@Date), 
+                           DATEPART(HOUR, @StartTime), DATEPART(MINUTE, @StartTime), 0, 0))
+                   > 
+                   DATETIMEFROMPARTS(YEAR(Date), MONTH(Date), DAY(Date), 
+                       DATEPART(HOUR, TimeUTC), DATEPART(MINUTE, TimeUTC), 0, 0)
+                   AND
+                   DATETIMEFROMPARTS(YEAR(@Date), MONTH(@Date), DAY(@Date), 
+                       DATEPART(HOUR, @StartTime), DATEPART(MINUTE, @StartTime), 0, 0)
+                   < 
+                   DATEADD(MINUTE, DurationInMinutes,
+                       DATETIMEFROMPARTS(YEAR(Date), MONTH(Date), DAY(Date), 
+                           DATEPART(HOUR, TimeUTC), DATEPART(MINUTE, TimeUTC), 0, 0))
+               )";
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@VenueId", newEvent.VenueId);
+            command.Parameters.AddWithValue("@Date", newEvent.Date);
+            command.Parameters.AddWithValue("@StartTime", newEvent.TimeUTC);
+            command.Parameters.AddWithValue("@Duration", newEvent.DurationInMinutes);
+
+            var result = await command.ExecuteScalarAsync();
+
+            if (result == null)
+            {
+                throw new Exception("Unexpected database response while checking venue conflicts");
+            }
+
+            var conflictCount = Convert.ToInt32(result);
+            return conflictCount > 0;
+        }
+
+        private static async Task<bool> CheckTeamConflictAsync(SqlConnection connection, CreateEventDto newEvent)
+        {
+            var sql = @"
+                SELECT COUNT(1)
+                FROM Event
+                WHERE (
+                    (HomeTeamId = @HomeTeamId OR AwayTeamId = @HomeTeamId)
+                    OR 
+                    (HomeTeamId = @AwayTeamId OR AwayTeamId = @AwayTeamId)
+                )
+                AND (
+                    DATEADD(MINUTE, @Duration, 
+                        DATETIMEFROMPARTS(YEAR(@Date), MONTH(@Date), DAY(@Date), 
+                            DATEPART(HOUR, @StartTime), DATEPART(MINUTE, @StartTime), 0, 0))
+                    > 
+                    DATETIMEFROMPARTS(YEAR(Date), MONTH(Date), DAY(Date), 
+                        DATEPART(HOUR, TimeUTC), DATEPART(MINUTE, TimeUTC), 0, 0)
+                    AND
+                    DATETIMEFROMPARTS(YEAR(@Date), MONTH(@Date), DAY(@Date), 
+                        DATEPART(HOUR, @StartTime), DATEPART(MINUTE, @StartTime), 0, 0)
+                    < 
+                    DATEADD(MINUTE, DurationInMinutes,
+                        DATETIMEFROMPARTS(YEAR(Date), MONTH(Date), DAY(Date), 
+                            DATEPART(HOUR, TimeUTC), DATEPART(MINUTE, TimeUTC), 0, 0))
+                )";
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@HomeTeamId", newEvent.HomeTeamId);
+            command.Parameters.AddWithValue("@AwayTeamId", newEvent.AwayTeamId);
+            command.Parameters.AddWithValue("@Date", newEvent.Date);
+            command.Parameters.AddWithValue("@StartTime", newEvent.TimeUTC);
+            command.Parameters.AddWithValue("@Duration", newEvent.DurationInMinutes);
+
+            var result = await command.ExecuteScalarAsync();
+
+            if (result == null)
+            {
+                throw new Exception("Unexpected database response while checking team conflicts");
+            }
+
+            var conflictCount = Convert.ToInt32(result);
+            return conflictCount > 0;
+        }
     }
 }
