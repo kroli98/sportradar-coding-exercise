@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SportradarCodingExercise.Server.CustomExceptions;
+using SportradarCodingExercise.Server.DTOs;
 using SportradarCodingExercise.Server.Interfaces;
 using SportradarCodingExercise.Server.Models;
 using System.Globalization;
@@ -95,6 +97,25 @@ namespace SportradarCodingExercise.Server.Controllers
                 }
 
                 return Ok(events);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Event>> AddEvent(CreateEventDto evnt)
+        {
+            try
+            {
+                var createdEvent = await _eventService.AddEventAsync(evnt);
+
+                return CreatedAtAction(nameof(GetEvent),new { id = createdEvent.EventId }, createdEvent);
+            }
+            catch (EventConflictException ex)
+            {
+                return Conflict( new { message = ex.Message, conflictType = ex.ConflictType.ToString() });
             }
             catch (Exception)
             {
