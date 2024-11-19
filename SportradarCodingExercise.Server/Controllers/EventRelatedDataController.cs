@@ -18,7 +18,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("competitions")]
-        public async Task<IActionResult> GetCompetitions()
+        public async Task<ActionResult<IEnumerable<Competition>>> GetCompetitions()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("seasons")]
-        public async Task<IActionResult> GetSeasons()
+        public async Task<ActionResult<IEnumerable<Season>>> GetSeasons()
         {
             try
             {
@@ -46,7 +46,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("sports")]
-        public async Task<IActionResult> GetSports()
+        public async Task<ActionResult<IEnumerable<Sport>>> GetSports()
         {
             try
             {
@@ -60,7 +60,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("stages")]
-        public async Task<IActionResult> GetStages()
+        public async Task<ActionResult<IEnumerable<Stage>>> GetStages()
         {
             try
             {
@@ -74,7 +74,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("statuses")]
-        public async Task<IActionResult> GetStatuses()
+        public async Task<ActionResult<IEnumerable<Status>>> GetStatuses()
         {
             try
             {
@@ -88,7 +88,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("teams")]
-        public async Task<IActionResult> GetTeams()
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeams()
         {
             try
             {
@@ -102,7 +102,7 @@ namespace SportradarCodingExercise.Server.Controllers
         }
 
         [HttpGet("venues")]
-        public async Task<IActionResult> GetVenues()
+        public async Task<ActionResult<IEnumerable<Venue>>> GetVenues()
         {
             try
             {
@@ -115,7 +115,7 @@ namespace SportradarCodingExercise.Server.Controllers
             }
         }
         [HttpGet("event-details/{eventId}")]
-        public async Task<ActionResult> GetEventDetailsByEventId(int eventId)
+        public async Task<ActionResult<IEnumerable<EventDetailDto>>> GetEventDetailsByEventId(int eventId)
         {
             try
             {
