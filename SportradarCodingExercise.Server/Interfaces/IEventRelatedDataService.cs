@@ -1,4 +1,5 @@
-﻿using SportradarCodingExercise.Server.Models;
+﻿using SportradarCodingExercise.Server.DTOs;
+using SportradarCodingExercise.Server.Models;
 
 namespace SportradarCodingExercise.Server.Interfaces
 {
@@ -11,6 +12,7 @@ namespace SportradarCodingExercise.Server.Interfaces
         Task<IEnumerable<Competition>> GetCompetitionsAsync();
         Task<IEnumerable<Sport>> GetSportsAsync();
         Task<IEnumerable<Season>> GetSeasonsAsync();
+        Task<IEnumerable<EventDetailDto>> GetEventDetailsByEventIdAsync(int eventId);
 
     }
 }
