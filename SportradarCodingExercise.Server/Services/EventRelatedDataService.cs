@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using SportradarCodingExercise.Server.DTOs;
 using SportradarCodingExercise.Server.Interfaces;
 using SportradarCodingExercise.Server.Models;
 
@@ -36,6 +37,80 @@ namespace SportradarCodingExercise.Server.Services
             }
 
             return competitions;
+        }
+
+        public async Task<IEnumerable<EventDetailDto>> GetEventDetailsByEventIdAsync(int eventId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var sql = @"
+                SELECT
+                    ed.EventDetailId,
+                    ed.RecordedAtUTC,
+                    ed.Description,
+                    t.TeamId,
+                    t.Name AS TeamName,
+                    t.OfficialName,
+                    t.Slug,
+                    t.Abbreviation,
+                    c.CountryId,
+                    c.Name AS CountryName,
+                    c.CountryCode,
+                    s.SportId,
+                    s.Name AS SportName,
+                    et.EventTypeId,
+                    et.Name AS EventTypeName
+                FROM EventDetail ed
+                INNER JOIN Team t ON ed.TeamId = t.TeamId
+                INNER JOIN Country c ON t.CountryId = c.CountryId
+                INNER JOIN Sport s ON t.SportId = s.SportId
+                INNER JOIN EventType et ON ed.EventTypeId = et.EventTypeId
+                WHERE ed.EventId = @eventId";
+
+            var command = new SqlCommand(sql, connection);
+
+            command.Parameters.AddWithValue("@eventId", eventId);
+
+            var eventDetails = new List<EventDetailDto>();
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                eventDetails.Add(new EventDetailDto
+                {
+                    EventDetailId = reader.GetInt32(reader.GetOrdinal("EventDetailId")),
+                    RecordedAtUTC = reader.GetDateTime(reader.GetOrdinal("RecordedAtUTC")),
+                    Description = await reader.IsDBNullAsync(reader.GetOrdinal("Description"))
+                    ? null : reader.GetString(reader.GetOrdinal("Description")),
+                    Team = new Team
+                    {
+                        TeamId = reader.GetInt32(reader.GetOrdinal("TeamId")),
+                        Name = reader.GetString(reader.GetOrdinal("TeamName")),
+                        OfficialName = reader.GetString(reader.GetOrdinal("OfficialName")),
+                        Slug = reader.GetString(reader.GetOrdinal("Slug")),
+                        Abbreviation = reader.GetString(reader.GetOrdinal("Abbreviation")),
+                        Country = new Country
+                        {
+                            CountryId = reader.GetInt32(reader.GetOrdinal("CountryId")),
+                            Name = reader.GetString(reader.GetOrdinal("CountryName")),
+                            CountryCode = reader.GetString(reader.GetOrdinal("CountryCode"))
+                        },
+                        Sport = new Sport
+                        {
+                            SportId = reader.GetInt32(reader.GetOrdinal("SportId")),
+                            Name = reader.GetString(reader.GetOrdinal("SportName"))
+                        }
+                    },
+                    EventType = new EventType
+                    {
+                        EventTypeId = reader.GetInt32(reader.GetOrdinal("EventTypeId")),
+                        Name = reader.GetString(reader.GetOrdinal("EventTypeName"))
+                    }
+                });
+            }
+
+            return eventDetails;
         }
 
         public async Task<IEnumerable<Season>> GetSeasonsAsync()
