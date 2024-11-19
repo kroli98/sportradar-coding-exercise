@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SportradarCodingExercise.Server.DTOs;
 using SportradarCodingExercise.Server.Interfaces;
+using SportradarCodingExercise.Server.Models;
+using SportradarCodingExercise.Server.Services;
 
 namespace SportradarCodingExercise.Server.Controllers
 {
@@ -107,6 +110,25 @@ namespace SportradarCodingExercise.Server.Controllers
                 return Ok(venues);
             }
             catch
+            {
+                return StatusCode(500);
+            }
+        }
+        [HttpGet("event-details/{eventId}")]
+        public async Task<ActionResult> GetEventDetailsByEventId(int eventId)
+        {
+            try
+            {
+                var eventDetails = await _eventRelatedDataService.GetEventDetailsByEventIdAsync(eventId);
+
+                if (!eventDetails.Any())
+                {
+                    return NoContent();
+                }
+
+                return Ok(eventDetails);
+            }
+            catch (Exception)
             {
                 return StatusCode(500);
             }
