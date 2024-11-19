@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<DatabaseInitializer>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IEventRelatedDataService, EventRelatedDataService>();
 
 var app = builder.Build();
 
@@ -43,7 +44,7 @@ if (app.Environment.IsDevelopment())
 
         //Only necessary if we want initial data, we should remove it otherwise
         //Remove after we have seeded, avoiding reseeding
-        await dbInitializer.SeedAsync();
+        //await dbInitializer.SeedAsync();
     }
 }
 
