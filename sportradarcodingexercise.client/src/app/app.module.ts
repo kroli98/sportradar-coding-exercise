@@ -7,12 +7,14 @@ import { EventListComponent } from './lists/event-list/event-list.component';
 import { NavComponent } from './nav/nav.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AddEventComponent } from './add-event/add-event.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EventListComponent,
-    NavComponent
+    NavComponent,
+    AddEventComponent
   ],
   imports: [
     BrowserModule, HttpClientModule, AppRoutingModule, NgbModule
