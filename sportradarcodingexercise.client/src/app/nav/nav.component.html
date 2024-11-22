@@ -1,1 +1,36 @@
-<p>nav works!</p>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-calendar-event me-2"></i>
+            Sports Calendar
+        </a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler"
+                type="button"
+                (click)="isMenuCollapsed = !isMenuCollapsed">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Items -->
+        <div class="collapse navbar-collapse"
+             [ngbCollapse]="isMenuCollapsed">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Events -->
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        <i class="bi bi-card-list me-1"></i>Events
+                    </a>
+                </li>
+
+                <!-- Add New Event -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="bi bi-plus-circle me-1"></i>Add Event
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
