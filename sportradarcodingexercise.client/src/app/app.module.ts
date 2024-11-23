@@ -8,6 +8,7 @@ import { NavComponent } from './nav/nav.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AddEventComponent } from './add-event/add-event.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,7 @@ import { AddEventComponent } from './add-event/add-event.component';
     AddEventComponent
   ],
   imports: [
-    BrowserModule, HttpClientModule, AppRoutingModule, NgbModule
+    BrowserModule, HttpClientModule, AppRoutingModule, NgbModule, ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
