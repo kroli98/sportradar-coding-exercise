@@ -1,5 +1,50 @@
+<!-- event-list.component.html -->
 <div class="container mt-4 mb-4">
     <h1 class="h3 mb-4">Sports Events</h1>
+
+    <!-- Filters -->
+    <div class="row mb-4" *ngIf="!loading && !error">
+        <!-- Sport Filter -->
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <label for="sportFilter" class="form-label">
+                        Filter by Sport
+                    </label>
+                    <select id="sportFilter" class="form-select"
+                            [ngModel]="selectedSportId"
+                            (ngModelChange)="onSportChange($event)">
+                        <option [ngValue]="null">All Sports</option>
+                        <option *ngFor="let sport of sports" [ngValue]="sport.sportId">
+                            {{sport.name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Filter -->
+        <div class="col-md-6 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <label for="dateFilter" class="form-label">
+                        Filter by Date
+                    </label>
+                    <div class="input-group">
+                        <input id="dateFilter"
+                               placeholder="yyyy-mm-dd"
+                               class="form-control"
+                               name="dp"
+                               [(ngModel)]="model"
+                               (ngModelChange)="onDateChange($event)"
+                               ngbDatepicker
+                               #d="ngbDatepicker" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Loading State -->
     <div *ngIf="loading" class="text-center my-5">
@@ -21,16 +66,47 @@
     </div>
 
     <!-- No Events State -->
-    <div *ngIf="!loading && !error && events.length === 0"
+    <div *ngIf="!loading && !error && filteredEvents.length === 0"
          class="alert alert-info" role="alert">
         <i class="bi bi-info-circle me-2"></i>
-        No sports events found.
+        No sports events found for the selected filters.
+        <button *ngIf="selectedSportId || selectedDate"
+                class="btn btn-link btn-sm text-info"
+                (click)="clearFilters()">
+            Clear filters
+        </button>
     </div>
 
     <!-- Events List -->
-    <div *ngIf="!loading && !error && events.length > 0">
+    <div *ngIf="!loading && !error && filteredEvents.length > 0">
+        <!-- Active Filters -->
+        <div *ngIf="selectedSportId || selectedDate" class="mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted">Active filters:</span>
+                <div *ngIf="selectedSportId" class="badge bg-primary">
+                    Sport: {{getSelectedSportName()}}
+                    <button class="btn btn-link btn-sm text-white p-0 ms-2"
+                            (click)="clearSportFilter()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div *ngIf="selectedDate" class="badge bg-primary">
+                    Date: {{selectedDate | date:'mediumDate'}}
+                    <button class="btn btn-link btn-sm text-white p-0 ms-2"
+                            (click)="clearDateFilter()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <button *ngIf="selectedSportId || selectedDate"
+                        class="btn btn-link btn-sm text-primary"
+                        (click)="clearFilters()">
+                    Clear all
+                </button>
+            </div>
+        </div>
+
         <div class="row">
-            <div *ngFor="let event of events" class="col-12 mb-4">
+            <div *ngFor="let event of filteredEvents" class="col-12 mb-4">
                 <div class="card h-100 shadow-sm">
                     <!-- Header with Competition, Sport, Stage -->
                     <div class="card-header bg-primary text-white">

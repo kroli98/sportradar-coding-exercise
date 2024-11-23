@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event';
+import { Sport } from '../../models/sport';
+import { EventRelatedDataService } from '../../services/event-related-data.service';
+import { forkJoin } from 'rxjs';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap'; 
 
 
 @Component({
@@ -10,11 +14,18 @@ import { Event } from '../../models/event';
 })
 export class EventListComponent {
 
-  events: Event[] = []
+  events: Event[] = [];
+  filteredEvents: Event[] = [];
+  sports: Sport[] = [];
   loading = true;
   error: string | null = null;
+  selectedSportId: number | null = null;
+  selectedDate: string = '';
+  model: NgbDateStruct | null = null;
 
-  constructor(private readonly eventService: EventService) { }
+  constructor(private readonly eventService: EventService,
+              private readonly eventRelatedDataService: EventRelatedDataService
+  ) { }
 
   ngOnInit() {
     this.loadEvents();
@@ -24,9 +35,14 @@ export class EventListComponent {
     this.loading = true;
     this.error = null;
 
-    this.eventService.getEvents().subscribe({
-      next: (events) => {
-        this.events = events;
+    forkJoin({
+      events: this.eventService.getEvents(),
+      sports: this.eventRelatedDataService.getSports()
+    }).subscribe({
+      next: (data) => {
+        this.events = data.events;
+        this.filteredEvents = data.events;
+        this.sports = data.sports;
         this.loading = false;
       },
       error: (error) => {
@@ -35,6 +51,55 @@ export class EventListComponent {
         this.loading = false;
       }
     });
+  }
+
+  applyFilters() {
+    this.filteredEvents = this.events.filter(event => {
+      const matchesSport = !this.selectedSportId || event.sport.sportId === this.selectedSportId;
+      const matchesDate = !this.selectedDate || event.date === this.selectedDate;
+      return matchesSport && matchesDate;
+    });
+  }
+
+  onSportChange(sportId: number) {
+    this.selectedSportId = sportId;
+    this.applyFilters();
+  }
+
+  clearFilters() {
+    this.selectedSportId = null;
+    this.selectedDate = '';
+    this.model = null; 
+    this.applyFilters();
+  }
+
+  clearSportFilter() {
+    this.selectedSportId = null;
+    this.applyFilters();
+  }
+
+  clearDateFilter() {
+    this.selectedDate = '';
+    this.model = null; 
+    this.applyFilters();
+  }
+
+  getSelectedSportName(): string {
+    const sport = this.sports.find(s => s.sportId === this.selectedSportId);
+    return sport ? sport.name : '';
+  }
+
+  onDateChange(date: NgbDateStruct) {
+    if (date) {
+      this.selectedDate = `${date.year}-${this.padNumber(date.month)}-${this.padNumber(date.day)}`;
+      this.applyFilters();
+    } else {
+      this.clearDateFilter();
+    }
+  }
+
+  private padNumber(num: number): string {
+    return num < 10 ? `0${num}` : num.toString();
   }
 
   retry() {
