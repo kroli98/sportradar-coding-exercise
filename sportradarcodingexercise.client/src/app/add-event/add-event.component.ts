@@ -10,6 +10,8 @@ import { Venue } from '../models/venue';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { EventService } from '../services/event.service';
+import { CreateEvent } from '../models/create-event';
 
 @Component({
   selector: 'app-add-event',
@@ -28,16 +30,19 @@ export class AddEventComponent implements OnInit {
   error: string | null = null;
   submitSuccess = false;
   formError: string | null = null;
+  submitting = false;
+
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly eventRelatedDataService: EventRelatedDataService
+    private readonly eventRelatedDataService: EventRelatedDataService,
+    private readonly eventService: EventService
   ) {
     this.eventForm = this.fb.group({
       date: ['', [Validators.required]],
       timeUTC: ['', [Validators.required]],
       durationInMinutes: ['', [Validators.required, Validators.min(1)]],
-      description: [''],
+      description: ['', [Validators.maxLength(1000)]], 
       homeScore: [0, [Validators.required, Validators.min(0)]],
       awayScore: [0, [Validators.required, Validators.min(0)]],
       statusId: ['', [Validators.required]],
@@ -87,15 +92,43 @@ export class AddEventComponent implements OnInit {
   onSubmit() {
     if (this.eventForm.valid) {
       const formData = this.eventForm.value;
-      console.log('Form Data:', formData);
 
-      this.submitSuccess = true;
+      const transformedData: CreateEvent = {
+        date: this.formatDate(formData.date),
+        timeUTC: this.formatTime(formData.timeUTC),
+        durationInMinutes: Number(formData.durationInMinutes),
+        description: formData.description, 
+        homeScore: Number(formData.homeScore),
+        awayScore: Number(formData.awayScore),
+        statusId: Number(formData.statusId),
+        homeTeamId: Number(formData.homeTeamId),
+        awayTeamId: Number(formData.awayTeamId),
+        venueId: Number(formData.venueId),
+        stageId: Number(formData.stageId),
+        competitionId: Number(formData.competitionId),
+        sportId: Number(formData.sportId)
+      };
+
+      this.submitting = true;
       this.formError = null;
-      this.eventForm.reset();
-      setTimeout(() => this.submitSuccess = false, 3000);
+      console.log(transformedData)
+      this.eventService.postEvent(transformedData)
+        .pipe(finalize(() => this.submitting = false))
+        .subscribe({
+          next: (response) => {
+            this.submitSuccess = true;
+            this.formError = null;
+            this.eventForm.reset();
+            setTimeout(() => this.submitSuccess = false, 3000);
+          },
+          error: (error) => {
+            this.formError = error.error?.message || 'Failed to add event';
+            console.error('Add Event Error:', error);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
     } else {
       this.markFormGroupTouched(this.eventForm);
-
       if (this.eventForm.errors?.['sameTeams']) {
         this.formError = 'Home and Away teams cannot be the same';
       }
@@ -115,6 +148,15 @@ export class AddEventComponent implements OnInit {
     this.eventForm.patchValue({
       date: `${date.year}-${date.month.toString().padStart(2, '0')}-${date.day.toString().padStart(2, '0')}`
     });
+  }
+
+  private formatDate(date: any): string {
+    if (typeof date === 'string') return date;
+    return `${date.year}-${String(date.month).padStart(2, '0')}-${String(date.day).padStart(2, '0')}`;
+  }
+
+  private formatTime(time: string): string {
+    return `${time}:00`;
   }
 
   teamsNotSame(group: AbstractControl): ValidationErrors | null {
