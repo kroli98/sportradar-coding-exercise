@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { Event } from '../models/event';
+import {CreateEvent} from '../models/create-event';
 
 @Injectable({
   providedIn: 'root'
@@ -26,5 +27,9 @@ export class EventService {
 
   getEventBySportId(sportId: number) {
     return this.http.get<Event>(this.baseUrl + '/sport-events/sport/' + sportId);
+  }
+
+  postEvent(event: CreateEvent) {
+    return this.http.post(this.baseUrl + '/sport-events', event);
   }
 }
