@@ -1,1 +1,211 @@
-<p>add-event works!</p>
+<div class="container mt-4 mb-4">
+    <h1 class="h3 mb-4">Add Sport Event</h1>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading form data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="alert alert-danger" role="alert">
+        {{error}}
+        <button class="btn btn-outline-danger btn-sm float-end" (click)="loadRelatedData()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Retry
+        </button>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="submitSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+        Event successfully added!
+        <button type="button" class="btn-close" (click)="submitSuccess = false" aria-label="Close"></button>
+    </div>
+
+    <!-- Form Level Error -->
+    <div *ngIf="formError" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ formError }}
+        <button type="button" class="btn-close" (click)="formError = null" aria-label="Close"></button>
+    </div>
+
+    <!-- Event Form -->
+    <form *ngIf="!loading && !error" [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="row g-3">
+        <!-- Competition -->
+        <div class="col-md-6">
+            <label for="competition" class="form-label">Competition</label>
+            <select id="competition" class="form-select" formControlName="competitionId"
+                    [class.is-invalid]="eventForm.get('competitionId')?.touched && eventForm.get('competitionId')?.invalid">
+                <option value="">Select Competition</option>
+                <option *ngFor="let competition of competitions" [value]="competition.competitionId">
+                    {{competition.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('competitionId')">
+                {{ getErrorMessage('competitionId') }}
+            </div>
+        </div>
+
+        <!-- Sport -->
+        <div class="col-md-6">
+            <label for="sport" class="form-label">Sport</label>
+            <select id="sport" class="form-select" formControlName="sportId"
+                    [class.is-invalid]="eventForm.get('sportId')?.touched && eventForm.get('sportId')?.invalid">
+                <option value="">Select Sport</option>
+                <option *ngFor="let sport of sports" [value]="sport.sportId">
+                    {{sport.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('sportId')">
+                {{ getErrorMessage('sportId') }}
+            </div>
+        </div>
+
+        <!-- Date and Time -->
+        <div class="col-md-6">
+            <label for="date" class="form-label">Date</label>
+            <div class="input-group">
+                <input class="form-control"
+                       [class.is-invalid]="eventForm.get('date')?.touched && eventForm.get('date')?.invalid"
+                       placeholder="yyyy-mm-dd"
+                       name="dp"
+                       formControlName="date"
+                       ngbDatepicker
+                       #d="ngbDatepicker">
+                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+            </div>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('date')">
+                {{ getErrorMessage('date') }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="time" class="form-label">Time (UTC)</label>
+            <input type="time" class="form-control" id="time" formControlName="timeUTC"
+                   [class.is-invalid]="eventForm.get('timeUTC')?.touched && eventForm.get('timeUTC')?.invalid">
+            <div class="invalid-feedback" *ngIf="getErrorMessage('timeUTC')">
+                {{ getErrorMessage('timeUTC') }}
+            </div>
+        </div>
+
+        <!-- Teams -->
+        <div class="col-md-6">
+            <label for="homeTeam" class="form-label">Home Team</label>
+            <select id="homeTeam" class="form-select" formControlName="homeTeamId"
+                    [class.is-invalid]="eventForm.get('homeTeamId')?.touched && eventForm.get('homeTeamId')?.invalid">
+                <option value="">Select Home Team</option>
+                <option *ngFor="let team of teams" [value]="team.teamId">
+                    {{team.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('homeTeamId')">
+                {{ getErrorMessage('homeTeamId') }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="awayTeam" class="form-label">Away Team</label>
+            <select id="awayTeam" class="form-select" formControlName="awayTeamId"
+                    [class.is-invalid]="eventForm.get('awayTeamId')?.touched && eventForm.get('awayTeamId')?.invalid">
+                <option value="">Select Away Team</option>
+                <option *ngFor="let team of teams" [value]="team.teamId">
+                    {{team.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('awayTeamId')">
+                {{ getErrorMessage('awayTeamId') }}
+            </div>
+        </div>
+
+        <!-- Scores -->
+        <div class="col-md-6">
+            <label for="homeScore" class="form-label">Home Score</label>
+            <input type="number" class="form-control" id="homeScore" formControlName="homeScore"
+                   [class.is-invalid]="eventForm.get('homeScore')?.touched && eventForm.get('homeScore')?.invalid">
+            <div class="invalid-feedback" *ngIf="getErrorMessage('homeScore')">
+                {{ getErrorMessage('homeScore') }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="awayScore" class="form-label">Away Score</label>
+            <input type="number" class="form-control" id="awayScore" formControlName="awayScore"
+                   [class.is-invalid]="eventForm.get('awayScore')?.touched && eventForm.get('awayScore')?.invalid">
+            <div class="invalid-feedback" *ngIf="getErrorMessage('awayScore')">
+                {{ getErrorMessage('awayScore') }}
+            </div>
+        </div>
+
+        <!-- Status and Stage -->
+        <div class="col-md-6">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" class="form-select" formControlName="statusId"
+                    [class.is-invalid]="eventForm.get('statusId')?.touched && eventForm.get('statusId')?.invalid">
+                <option value="">Select Status</option>
+                <option *ngFor="let status of statuses" [value]="status.statusId">
+                    {{status.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('statusId')">
+                {{ getErrorMessage('statusId') }}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label for="stage" class="form-label">Stage</label>
+            <select id="stage" class="form-select" formControlName="stageId"
+                    [class.is-invalid]="eventForm.get('stageId')?.touched && eventForm.get('stageId')?.invalid">
+                <option value="">Select Stage</option>
+                <option *ngFor="let stage of stages" [value]="stage.stageId">
+                    {{stage.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('stageId')">
+                {{ getErrorMessage('stageId') }}
+            </div>
+        </div>
+
+        <!-- Venue -->
+        <div class="col-12">
+            <label for="venue" class="form-label">Venue</label>
+            <select id="venue" class="form-select" formControlName="venueId"
+                    [class.is-invalid]="eventForm.get('venueId')?.touched && eventForm.get('venueId')?.invalid">
+                <option value="">Select Venue</option>
+                <option *ngFor="let venue of venues" [value]="venue.venueId">
+                    {{venue.name}}
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('venueId')">
+                {{ getErrorMessage('venueId') }}
+            </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="col-md-6">
+            <label for="duration" class="form-label">Duration (minutes)</label>
+            <input type="number" class="form-control" id="duration" formControlName="durationInMinutes"
+                   [class.is-invalid]="eventForm.get('durationInMinutes')?.touched && eventForm.get('durationInMinutes')?.invalid">
+            <div class="invalid-feedback" *ngIf="getErrorMessage('durationInMinutes')">
+                {{ getErrorMessage('durationInMinutes') }}
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-12">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" rows="3" formControlName="description"
+                      [class.is-invalid]="eventForm.get('description')?.touched && eventForm.get('description')?.invalid">
+            </textarea>
+            <div class="invalid-feedback" *ngIf="getErrorMessage('description')">
+                {{ getErrorMessage('description') }}
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>Add Event
+            </button>
+        </div>
+    </form>
+</div>
