@@ -182,6 +182,52 @@
                         <div class="mt-2 small text-muted">
                             Duration: {{event.durationInMinutes}} minutes
                         </div>
+                        <div class="mt-3 pt-3 border-top">
+                            <button class="btn btn-link p-0 text-decoration-none"
+                                    (click)="toggleEventDetails(event.eventId)">
+                                <i class="bi" [ngClass]="isEventExpanded(event.eventId) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                                {{ isEventExpanded(event.eventId) ? 'Hide' : 'Show' }} Event Details
+                            </button>
+
+                            <div *ngIf="isEventExpanded(event.eventId)" class="mt-3">
+                                <!-- Loading State -->
+                                <div *ngIf="loadingDetails[event.eventId]" class="text-center py-3">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                        <span class="visually-hidden">Loading details...</span>
+                                    </div>
+                                    <p class="text-muted mb-0 small">Loading event details...</p>
+                                </div>
+
+                                <!-- Details Content -->
+                                <div *ngIf="!loadingDetails[event.eventId]">
+                                    <ng-container *ngIf="eventDetails[event.eventId]?.length > 0; else noDetails">
+                                        <div *ngFor="let detail of eventDetails[event.eventId]"
+                                             class="mb-2 p-2 border-bottom">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div>
+                                                    <span class="badge bg-info me-2">{{detail.eventType.name}}</span>
+                                                    <span class="text-primary">{{detail.team.name}}</span>
+                                                </div>
+                                                <small class="text-muted">
+                                                    {{detail.recordedAtUTC | date:'HH:mm:ss'}}
+                                                </small>
+                                            </div>
+                                            <p *ngIf="detail.description" class="mb-0 small text-muted mt-1">
+                                                {{detail.description}}
+                                            </p>
+                                        </div>
+                                    </ng-container>
+
+                                    <!-- No Details State -->
+                                    <ng-template #noDetails>
+                                        <div class="text-center text-muted py-3">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            No event details available
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

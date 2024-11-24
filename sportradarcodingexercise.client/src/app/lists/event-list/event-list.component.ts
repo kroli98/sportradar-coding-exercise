@@ -23,6 +23,10 @@ export class EventListComponent {
   selectedDate: string = '';
   model: NgbDateStruct | null = null;
 
+  eventDetails: { [key: number]: any } = {}; 
+  loadingDetails: { [key: number]: boolean } = {};
+  expandedEvents: Set<number> = new Set(); 
+
   constructor(private readonly eventService: EventService,
               private readonly eventRelatedDataService: EventRelatedDataService
   ) { }
@@ -51,6 +55,35 @@ export class EventListComponent {
         this.loading = false;
       }
     });
+  }
+
+  toggleEventDetails(eventId: number) {
+    if (this.expandedEvents.has(eventId)) {
+      this.expandedEvents.delete(eventId);
+      delete this.eventDetails[eventId];
+    } else {
+      this.expandedEvents.add(eventId);
+      this.loadEventDetails(eventId);
+    }
+  }
+
+  loadEventDetails(eventId: number) {
+    this.loadingDetails[eventId] = true;
+    this.eventRelatedDataService.getEventDetails(eventId).subscribe({
+      next: (details) => {
+        this.eventDetails[eventId] = details || []; 
+        this.loadingDetails[eventId] = false;
+      },
+      error: (error) => {
+        console.error(`Error loading event details for event ${eventId}:`, error);
+        this.eventDetails[eventId] = []; 
+        this.loadingDetails[eventId] = false;
+      }
+    });
+  }
+
+  isEventExpanded(eventId: number): boolean {
+    return this.expandedEvents.has(eventId);
   }
 
   applyFilters() {
