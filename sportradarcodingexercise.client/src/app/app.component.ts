@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 interface WeatherForecast {
   date: string;
@@ -13,14 +12,9 @@ interface WeatherForecast {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   constructor() { }
-
-    ngOnInit(): void {
-        throw new Error('Method not implemented.');
-    }
-
 
   title = 'sportradarcodingexercise.client';
 }
