@@ -9,6 +9,7 @@
         public string? Description { get; set; }
         public required int HomeScore { get; set; }
         public required int AwayScore { get; set; }
+        public int? WinnerTeamId { get; set; }
 
         public required Status Status { get; set; }
         public required Team HomeTeam { get; set; }
