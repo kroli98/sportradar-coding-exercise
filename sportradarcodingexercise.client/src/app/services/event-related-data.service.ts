@@ -9,6 +9,7 @@ import { Stage } from '../models/stage';
 import { Status } from '../models/status';
 import { Team } from '../models/team';
 import { Venue } from '../models/venue';
+import { EventDetail } from '../models/event-detail';
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +45,9 @@ export class EventRelatedDataService {
 
   getVenues() {
     return this.http.get<Venue[]>(this.baseUrl + '/venues');
+  }
+
+  getEventDetails(eventId: number) {
+    return this.http.get<EventDetail[]>(this.baseUrl + '/event-details/' + eventId);
   }
 }
