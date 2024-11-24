@@ -147,7 +147,7 @@ namespace SportradarCodingExercise.Server.Services
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
-            var sql = GetEventsQuery();
+            var sql = GetEventsQuery() + " ORDER BY e.Date DESC, e.TimeUTC ASC";
             var command = new SqlCommand(sql, connection);
 
             var events = new List<Event>();
