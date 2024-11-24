@@ -131,6 +131,14 @@
                                         <span class="h5 mb-0">
                                             {{event.homeScore}} - {{event.awayScore}}
                                         </span>
+                                        <div *ngIf="event.status.name === 'Completed'" class="small text-muted mt-1">
+                                            <ng-container *ngIf="event.winnerTeamId; else drawResult">
+                                                Winner: {{event.winnerTeamId === event.homeTeam.teamId ? event.homeTeam.name : event.awayTeam.name}}
+                                            </ng-container>
+                                            <ng-template #drawResult>
+                                                Draw
+                                            </ng-template>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col text-start">
