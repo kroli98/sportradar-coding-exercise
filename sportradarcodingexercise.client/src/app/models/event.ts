@@ -14,6 +14,7 @@ export interface Event {
   description: string | null
   homeScore: number
   awayScore: number
+  winnerTeamId: number | null
   status: Status
   homeTeam: Team
   awayTeam: Team
