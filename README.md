@@ -26,54 +26,44 @@ A sports event calendar web application built with ASP.NET Core 8 and Angular 16
 
 ## Development Assumptions and Decisions
 
-1. Database Design
+### Database Design
 
-  Event Structure:
-    Each event has exactly 2 participants (home and away teams)
-    Based on provided JSON file structure
-  
-  
-  Data Types:
-    Using varchar instead of nvarchar
-    Assumption: Database doesn't require storage of characters outside ASCII/Latin
-    Benefit: Smaller database size and faster operations
-  
-  Address Management:
-  
-  Separate table for Addresses
-    Reason: Multiple venues can share one address (e.g., sport complexes)
-    Benefit: No duplicate address data storage
-  
-  
-  Winner Determination:
-  
-  Simple winning logic based on higher score if event is 'Completed'
-  
-  Sport References:
-  
-  SportId maintained in both Event and Team tables
-    Event table: For optimized sport filtering
-    Team table: For ensuring unique abbreviations within sports
-  
-  Competition Structure:
-  
-  A competition might not have associated season, so it can be nullable
-  
+#### Event Structure
+- Each event has exactly 2 participants (home and away teams)
+- Based on provided JSON file structure
 
-2. Development Approach
+#### Data Types
+- Using `varchar` instead of `nvarchar`
+- Assumption: Database doesn't require storage of characters outside ASCII/Latin
+- Benefit: Smaller database size and faster operations
 
-Version Control:
+#### Address Management
+- Separate table for Addresses
+- Reason: Multiple venues can share one address (e.g., sport complexes)
+- Benefit: No duplicate address data storage
 
-Single branch development (solo project)
+#### Winner Determination
+- Simple winning logic based on higher score if event is 'Completed'
 
-Data Validation:
+#### Sport References
+- SportId maintained in both Event and Team tables
+ - Event table: For optimized sport filtering
+ - Team table: For ensuring unique abbreviations within sports
 
-Skipped detailed validation for event-related tables
-  Pre-initialized data considered unchangeable
-  Focus on event data validation
+#### Competition Structure
+- A competition might not have associated season, so it can be nullable
 
-Technology Choices:
+### Development Approach
 
-Backend: ASP.NET Core 8 with ADO.NET
-Database: Microsoft SQL Server
-Frontend: Angular with ng-bootstrap
+#### Version Control
+- Single branch development (solo project)
+
+#### Data Validation
+- Skipped detailed validation for event-related tables
+- Pre-initialized data considered unchangeable
+- Focus on event data validation
+
+### Technology Choices
+- Backend: ASP.NET Core 8 with ADO.NET
+- Database: Microsoft SQL Server
+- Frontend: Angular with ng-bootstrap
