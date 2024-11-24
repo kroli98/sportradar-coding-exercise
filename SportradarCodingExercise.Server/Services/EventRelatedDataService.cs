@@ -66,7 +66,8 @@ namespace SportradarCodingExercise.Server.Services
                 INNER JOIN Country c ON t.CountryId = c.CountryId
                 INNER JOIN Sport s ON t.SportId = s.SportId
                 INNER JOIN EventType et ON ed.EventTypeId = et.EventTypeId
-                WHERE ed.EventId = @eventId";
+                WHERE ed.EventId = @eventId
+                ORDER BY ed.RecordedAtUTC DESC";
 
             var command = new SqlCommand(sql, connection);
 
