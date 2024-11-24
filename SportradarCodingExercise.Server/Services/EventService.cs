@@ -303,6 +303,12 @@ namespace SportradarCodingExercise.Server.Services
         /// <returns>Populated Event model.</returns>
         private Event MapEventFromReader(SqlDataReader reader)
         {
+            var status = reader.GetString(reader.GetOrdinal("StatusName"));
+            var homeScore = reader.GetInt32(reader.GetOrdinal("HomeScore"));
+            var awayScore = reader.GetInt32(reader.GetOrdinal("AwayScore"));
+            var homeTeamId = reader.GetInt32(reader.GetOrdinal("HomeTeamId"));
+            var awayTeamId = reader.GetInt32(reader.GetOrdinal("AwayTeamId"));
+
             return new Event
             {
                 EventId = reader.GetInt32(reader.GetOrdinal("EventId")),
@@ -310,9 +316,10 @@ namespace SportradarCodingExercise.Server.Services
                 TimeUTC = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("TimeUTC"))),
                 DurationInMinutes = reader.GetInt32(reader.GetOrdinal("DurationInMinutes")),
                 Description = reader.IsDBNull(reader.GetOrdinal("Description"))
-                ? null: reader.GetString(reader.GetOrdinal("Description")),
-                HomeScore = reader.GetInt32(reader.GetOrdinal("HomeScore")),
-                AwayScore = reader.GetInt32(reader.GetOrdinal("AwayScore")),
+                ? null : reader.GetString(reader.GetOrdinal("Description")),
+                HomeScore = homeScore,
+                AwayScore = awayScore,
+                WinnerTeamId = GetWinner(status, homeScore, awayScore, homeTeamId, awayTeamId),
 
                 HomeTeam = new Team
                 {
@@ -553,6 +560,21 @@ namespace SportradarCodingExercise.Server.Services
 
             var conflictCount = Convert.ToInt32(result);
             return conflictCount > 0;
+        }
+
+        private static int? GetWinner(string status, int homeScore, int awayScore, int homeTeamId, int awayTeamId)
+        {
+            if (status != "Completed")
+            {
+                return null;
+            }
+
+            if (homeScore == awayScore)
+            {
+                return null;
+            }
+
+            return homeScore > awayScore ? homeTeamId : awayTeamId;
         }
     }
 }
